@@ -41,7 +41,7 @@ class Photo_Perfect_Heading_Control extends WP_Customize_Control {
 		<span class="description customize-control-description"><?php echo $this->description; ?></span>
 	<?php endif; ?>
 
-    <?php
+	<?php
 	}
 }
 
@@ -76,7 +76,7 @@ class Photo_Perfect_Message_Control extends WP_Customize_Control {
 	<?php if ( ! empty( $this->description ) ) : ?>
 		<span class="description customize-control-description"><?php echo $this->description; ?></span>
 	<?php endif; ?>
-    <?php
+	<?php
 	}
 }
 
@@ -109,8 +109,8 @@ class Photo_Perfect_Radio_Image_Control extends WP_Customize_Control {
 
 		$name = '_customize-radio-' . $this->id;
 
-	?>
-    <label>
+		?>
+	    <label>
 			<?php if ( ! empty( $this->label ) ) : ?>
 	      	<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 			<?php endif; ?>
@@ -200,19 +200,92 @@ class Photo_Perfect_Dropdown_Taxonomies_Control extends WP_Customize_Control {
 	?>
     <label>
       <span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-       <select <?php echo $this->link(); ?>>
+       <select <?php $this->link(); ?>>
 			<?php
 			printf( '<option value="%s" %s>%s</option>', '', selected( $this->value(), '', false ), ' ' );
 			?>
-			<?php if ( ! empty( $all_taxonomies ) ) :  ?>
-            <?php foreach ( $all_taxonomies as $key => $tax ) :  ?>
+			<?php if ( ! empty( $all_taxonomies ) ) : ?>
+            <?php foreach ( $all_taxonomies as $key => $tax ) : ?>
 				<?php
 				printf( '<option value="%s" %s>%s</option>', esc_attr( $tax->term_id ), selected( $this->value(), $tax->term_id, false ), esc_html( $tax->name ) );
 				?>
-            <?php endforeach ?>
-			<?php endif ?>
+            <?php endforeach; ?>
+			<?php endif; ?>
        </select>
     </label>
     <?php
 	}
+}
+
+/**
+ * Upsell customizer section.
+ *
+ * @since  1.0.0
+ * @access public
+ */
+class Photo_Perfect_Customize_Section_Upsell extends WP_Customize_Section {
+
+	/**
+	 * The type of customize section being rendered.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 * @var    string
+	 */
+	public $type = 'upsell';
+
+	/**
+	 * Custom button text to output.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 * @var    string
+	 */
+	public $pro_text = '';
+
+	/**
+	 * Custom pro button URL.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 * @var    string
+	 */
+	public $pro_url = '';
+
+	/**
+	 * Add custom parameters to pass to the JS via JSON.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 * @return void
+	 */
+	public function json() {
+		$json = parent::json();
+
+		$json['pro_text'] = $this->pro_text;
+		$json['pro_url']  = esc_url( $this->pro_url );
+
+		return $json;
+	}
+
+	/**
+	 * Outputs the Underscore.js template.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 * @return void
+	 */
+	protected function render_template() { ?>
+
+		<li id="accordion-section-{{ data.id }}" class="accordion-section control-section control-section-{{ data.type }} cannot-expand">
+
+			<h3 class="accordion-section-title">
+				{{ data.title }}
+
+				<# if ( data.pro_text && data.pro_url ) { #>
+					<a href="{{ data.pro_url }}" class="button button-secondary alignright" target="_blank">{{ data.pro_text }}</a>
+				<# } #>
+			</h3>
+		</li>
+	<?php }
 }

@@ -10,7 +10,7 @@ if ( ! function_exists( 'photo_perfect_get_option' ) ) :
 	/**
 	 * Get theme option from key.
 	 *
-	 * @since  Photo Perfect 1.0
+	 * @since 1.0.0
 	 *
 	 * @param string $key Option key.
 	 */
@@ -28,6 +28,25 @@ if ( ! function_exists( 'photo_perfect_get_option' ) ) :
 		if ( isset( $theme_options[ $key ] ) ) {
 			$value = $theme_options[ $key ];
 		}
+		return $value;
+
+	}
+
+endif;
+
+if ( ! function_exists( 'photo_perfect_get_options' ) ) :
+
+	/**
+	 * Get theme options.
+	 *
+	 * @since 1.5
+	 */
+	function photo_perfect_get_options() {
+
+		$value = array();
+
+		$value = get_theme_mod( 'theme_options' );
+
 		return $value;
 
 	}

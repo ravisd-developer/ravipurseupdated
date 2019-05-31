@@ -98,44 +98,89 @@ if ( ! function_exists( 'photo_perfect_render_theme_settings_metabox' ) ) :
 
 endif;
 
-
-
 if ( ! function_exists( 'photo_perfect_save_theme_settings_meta' ) ) :
 
 	/**
 	 * Save theme settings meta box value.
 	 *
-	 * @since  Photo Perfect 1.0
+	 * @since 1.0.0
 	 *
 	 * @param int $post_id Post ID.
+	 * @param WP_Post $post Post object.
 	 */
-	function photo_perfect_save_theme_settings_meta( $post_id ) {
+	function photo_perfect_save_theme_settings_meta( $post_id, $post ) {
 
 		// Verify nonce.
-		if ( ! isset( $_POST['photo_perfect_theme_settings_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['photo_perfect_theme_settings_meta_box_nonce'], basename( __FILE__ ) ) ) {
-			  return; }
+		if (
+			! ( isset( $_POST['photo_perfect_theme_settings_meta_box_nonce'] )
+			&& wp_verify_nonce( sanitize_key( $_POST['photo_perfect_theme_settings_meta_box_nonce'] ), basename( __FILE__ ) ) )
+		) {
+			return;
+		}
 
-		// Bail if auto save.
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return; }
+		// Bail if auto save or revision.
+		if ( defined( 'DOING_AUTOSAVE' ) || is_int( wp_is_post_revision( $post ) ) || is_int( wp_is_post_autosave( $post ) ) ) {
+			return;
+		}
 
 		// Check permission.
-		if ( 'page' === $_POST['post_type'] ) {
+		if ( isset( $_POST['post_type'] ) && 'page' === $_POST['post_type'] ) {
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
-				return; }
+				return;
+			}
 		} else if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 
-		if ( ! array_filter( $_POST['theme_settings'] ) ) {
-			// No value.
-			delete_post_meta( $post_id, 'theme_settings' );
-		} else {
-			update_post_meta( $post_id, 'theme_settings', $_POST['theme_settings'] );
-		}
+		if ( isset( $_POST['theme_settings'] ) && is_array( $_POST['theme_settings'] ) ) {
+
+			$raw_value = wp_unslash( $_POST['theme_settings'] );
+
+			if ( ! array_filter( $raw_value ) ) {
+
+				// No value.
+				delete_post_meta( $post_id, 'theme_settings' );
+
+			} else {
+
+				$meta_fields = array(
+					'post_layout' => array(
+						'type' => 'select',
+						),
+					'single_image' => array(
+						'type' => 'select',
+						),
+					'single_image_alignment' => array(
+						'type' => 'select',
+						),
+					);
+
+				$sanitized_values = array();
+
+				foreach ( $raw_value as $mk => $mv ) {
+
+					if ( isset( $meta_fields[ $mk ]['type'] ) ) {
+						switch ( $meta_fields[ $mk ]['type'] ) {
+							case 'select':
+								$sanitized_values[ $mk ] = sanitize_key( $mv );
+								break;
+							case 'checkbox':
+								$sanitized_values[ $mk ] = absint( $mv ) > 0 ? 1 : 0;
+								break;
+							default:
+								$sanitized_values[ $mk ] = sanitize_text_field( $mv );
+								break;
+						}
+					} // End if.
+
+				}
+
+				update_post_meta( $post_id, 'theme_settings', $sanitized_values );
+			}
+		} // End if theme settings.
 
 	}
 
 endif;
 
-add_action( 'save_post', 'photo_perfect_save_theme_settings_meta' );
+add_action( 'save_post', 'photo_perfect_save_theme_settings_meta', 10, 2 );

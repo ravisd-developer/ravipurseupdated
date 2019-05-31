@@ -24,25 +24,30 @@ function photo_perfect_customize_register( $wp_customize ) {
 	// Load customize callback.
 	require get_template_directory() . '/inc/customizer/callback.php';
 
-	$wp_customize->get_setting( 'blogname' )->transport         = 'postMessage';
-	$wp_customize->get_setting( 'blogdescription' )->transport  = 'postMessage';
-	$wp_customize->get_setting( 'header_textcolor' )->transport = 'postMessage';
+	$wp_customize->get_setting( 'blogname' )->transport        = 'postMessage';
+	$wp_customize->get_setting( 'blogdescription' )->transport = 'postMessage';
 
 	// Load customize option.
 	require get_template_directory() . '/inc/customizer/option.php';
 
+	// Register custom section types.
+	$wp_customize->register_section_type( 'Photo_Perfect_Customize_Section_Upsell' );
+
+	// Register sections.
+	$wp_customize->add_section(
+		new Photo_Perfect_Customize_Section_Upsell(
+			$wp_customize,
+			'theme_upsell',
+			array(
+				'title'    => esc_html__( 'Photo Perfect Pro', 'photo-perfect' ),
+				'pro_text' => esc_html__( 'Buy Pro', 'photo-perfect' ),
+				'pro_url'  => 'https://themepalace.com/downloads/photo-perfect-pro/',
+				'priority' => 1,
+			)
+		)
+	);
 }
 add_action( 'customize_register', 'photo_perfect_customize_register' );
-
-/**
- * Binds JS handlers to make Theme Customizer preview reload changes asynchronously.
- */
-function photo_perfect_customize_preview_js() {
-
-	wp_enqueue_script( 'photo_perfect_customizer', get_template_directory_uri() . '/js/customizer.js', array( 'customize-preview' ), '20130508', true );
-
-}
-add_action( 'customize_preview_init', 'photo_perfect_customize_preview_js' );
 
 /**
  * Load styles for Customizer.
@@ -52,9 +57,8 @@ function photo_perfect_load_customizer_styles() {
 	global $pagenow;
 
 	if ( 'customize.php' === $pagenow ) {
-		wp_register_style( 'photo-perfect-customizer-style', get_template_directory_uri() . '/css/customizer.css', false, '1.0.0' );
-		wp_enqueue_style( 'photo-perfect-customizer-style' );
-
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		wp_enqueue_style( 'photo-perfect-customizer-style', get_template_directory_uri() . '/css/customizer' . $min . '.css', false, '1.8.0' );
 	}
 
 }
@@ -62,20 +66,73 @@ function photo_perfect_load_customizer_styles() {
 add_action( 'admin_enqueue_scripts', 'photo_perfect_load_customizer_styles' );
 
 /**
- * Add Upgrade To Pro button.
+ * Customizer control scripts and styles.
  *
- * @since 1.0.0
+ * @since 1.8.0
  */
-function photo_perfect_custom_customize_enqueue_scripts() {
+function photo_perfect_customizer_control_scripts() {
 
-	wp_register_script( 'photo-perfect-customizer-button', get_template_directory_uri() . '/js/customizer-button.js', array( 'customize-controls' ), '1.0.0', true );
-	$data = array(
-	  'updrade_button_text' => __( 'Upgrade To Pro', 'photo-perfect' ),
-	  'updrade_button_link' => 'http://themepalace.com/shop/wordpress-themes/photo-perfect-pro/',
-	);
-	wp_localize_script( 'photo-perfect-customizer-button', 'Photo_Perfect_Customizer_Object', $data );
-	wp_enqueue_script( 'photo-perfect-customizer-button' );
+	$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+	wp_enqueue_script( 'photo-perfect-customize-controls', get_template_directory_uri() . '/js/customize-controls' . $min . '.js', array( 'customize-controls' ) );
+
+	wp_enqueue_style( 'photo-perfect-customize-controls', get_template_directory_uri() . '/css/customize-controls' . $min . '.css' );
 
 }
 
-add_action( 'customize_controls_enqueue_scripts', 'photo_perfect_custom_customize_enqueue_scripts' );
+add_action( 'customize_controls_enqueue_scripts', 'photo_perfect_customizer_control_scripts', 0 );
+
+/**
+ * Customizer partials.
+ *
+ * @since 1.8.0
+ */
+function photo_perfect_customizer_partials( WP_Customize_Manager $wp_customize ) {
+
+    // Abort if selective refresh is not available.
+    if ( ! isset( $wp_customize->selective_refresh ) ) {
+		$wp_customize->get_setting( 'blogname' )->transport        = 'refresh';
+		$wp_customize->get_setting( 'blogdescription' )->transport = 'refresh';
+        return;
+    }
+
+    // Load customizer partials callback.
+    require get_template_directory() . '/inc/customizer/partials.php';
+
+    // Partial blogname.
+    $wp_customize->selective_refresh->add_partial( 'blogname', array(
+		'selector'            => '.site-title a',
+		'container_inclusive' => false,
+		'render_callback'     => 'photo_perfect_customize_partial_blogname',
+    ) );
+
+    // Partial blogdescription.
+    $wp_customize->selective_refresh->add_partial( 'blogdescription', array(
+		'selector'            => '.site-description',
+		'container_inclusive' => false,
+		'render_callback'     => 'photo_perfect_customize_partial_blogdescription',
+    ) );
+
+}
+add_action( 'customize_register', 'photo_perfect_customizer_partials', 99 );
+
+
+/**
+ * Hide Custom CSS.
+ *
+ * @since 1.8.0
+ *
+ * @param WP_Customize_Manager $wp_customize Theme Customizer object.
+ */
+function photo_perfect_hide_custom_css( $wp_customize ) {
+
+	// Bail if not WP 4.7.
+	if ( ! function_exists( 'wp_get_custom_css_post' ) ) {
+		return;
+	}
+
+	$wp_customize->remove_control( 'theme_options[custom_css]' );
+
+}
+
+add_action( 'customize_register', 'photo_perfect_hide_custom_css', 99 );

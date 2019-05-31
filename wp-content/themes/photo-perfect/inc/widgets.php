@@ -10,7 +10,7 @@ if ( ! function_exists( 'photo_perfect_load_widgets' ) ) :
 	/**
 	 * Load widgets.
 	 *
-	 * @since Photo Perfect 1.0
+	 * @since 1.0.0
 	 */
 	function photo_perfect_load_widgets() {
 
@@ -22,7 +22,6 @@ if ( ! function_exists( 'photo_perfect_load_widgets' ) ) :
 endif;
 
 add_action( 'widgets_init', 'photo_perfect_load_widgets' );
-
 
 if ( ! class_exists( 'Photo_Perfect_Social_Widget' ) ) :
 
@@ -40,8 +39,9 @@ if ( ! class_exists( 'Photo_Perfect_Social_Widget' ) ) :
 		 */
 		function __construct() {
 			$opts = array(
-				'classname'   => 'photo_perfect_widget_social',
-				'description' => esc_html__( 'Social Icons Widget', 'photo-perfect' ),
+				'classname'                   => 'photo_perfect_widget_social',
+				'description'                 => esc_html__( 'Social Icons Widget', 'photo-perfect' ),
+				'customize_selective_refresh' => true,
 			);
 			parent::__construct( 'photo-perfect-social', esc_html__( 'PP: Social', 'photo-perfect' ), $opts );
 		}
@@ -66,27 +66,17 @@ if ( ! class_exists( 'Photo_Perfect_Social_Widget' ) ) :
 				echo $args['before_title'] . $title . $args['after_title'];
 			}
 
-			$nav_menu_locations = get_nav_menu_locations();
-			$menu_id = 0;
-			if ( isset( $nav_menu_locations['social'] ) && absint( $nav_menu_locations['social'] ) > 0 ) {
-				$menu_id = absint( $nav_menu_locations['social'] );
+			if ( has_nav_menu( 'social' ) ) {
+				wp_nav_menu( array(
+					'theme_location' => 'social',
+					'container'      => false,
+					'depth'          => 1,
+					'link_before'    => '<span class="screen-reader-text">',
+					'link_after'     => '</span>',
+					'item_spacing'   => 'discard',
+				) );
 			}
-			if ( $menu_id > 0 ) {
 
-				$menu_items = wp_get_nav_menu_items( $menu_id );
-
-				if ( ! empty( $menu_items ) ) {
-					echo '<ul class="size-medium">';
-					foreach ( $menu_items as $m_key => $m ) {
-						echo '<li>';
-						echo '<a href="' . esc_url( $m->url ) . '" target="_blank">';
-						echo '<span class="title screen-reader-text">' . esc_attr( $m->title ) . '</span>';
-						echo '</a>';
-						echo '</li>';
-					}
-					echo '</ul>';
-				}
-			}
 			echo $args['after_widget'];
 
 		}
@@ -104,7 +94,7 @@ if ( ! class_exists( 'Photo_Perfect_Social_Widget' ) ) :
 		function update( $new_instance, $old_instance ) {
 			$instance = $old_instance;
 
-			$instance['title'] = esc_html( strip_tags( $new_instance['title'] ) );
+			$instance['title'] = sanitize_text_field( $new_instance['title'] );
 
 			return $instance;
 		}
@@ -131,16 +121,16 @@ if ( ! class_exists( 'Photo_Perfect_Social_Widget' ) ) :
 				$is_menu_set = true;
 			}
 			?>
-		  <p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'photo-perfect' ); ?></label>
-        <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-		  </p>
+			<p>
+				<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'photo-perfect' ); ?></label>
+				<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+			</p>
 
-		<?php if ( true !== $is_menu_set ) :  ?>
-        <p>
-			<?php echo esc_html__( 'Social menu is not set. Please create menu and assign it to Social Menu.', 'photo-perfect' ); ?>
-        </p>
-        <?php endif ?>
+			<?php if ( true !== $is_menu_set ) : ?>
+				<p>
+					<?php echo esc_html__( 'Social menu is not set. Please create menu and assign it to Social Menu.', 'photo-perfect' ); ?>
+				</p>
+			<?php endif; ?>
 		<?php
 		}
 	}

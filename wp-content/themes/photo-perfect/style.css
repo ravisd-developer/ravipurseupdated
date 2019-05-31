@@ -1,19 +1,19 @@
   /*
   Theme Name: Photo Perfect
-  Theme URI: http://wenthemes.com/item/wordpress-themes/photo-perfect/
+  Theme URI: https://wenthemes.com/item/wordpress-themes/photo-perfect/
   Author: WEN Themes
-  Author URI: http://wenthemes.com/
-  Description: Photo Perfect is a responsive photography WordPress Theme for professional photographer, photo bloggers and creative peeps. Theme is very easy to customize, maintain and use on a daily basis. If you are looking to make a strong online brand presence through their creative and innovative work then this theme is made for you.
-  Version: 1.0.4
+  Author URI: https://wenthemes.com/
+  Description: Photo Perfect is a responsive photography WordPress Theme for professional photographer, photo bloggers and creative peeps. Theme is very easy to customize, maintain and use on a daily basis. If you are looking to make a strong online brand presence through their creative and innovative work then this theme is made for you. Official Support Forum: https://themepalace.com/support-forum/ Full Demo: https://wenthemes.com/theme-demos/?demo=photo-perfect
+  Version: 1.8.4
   License: GNU General Public License v2 or later
   License URI: http://www.gnu.org/licenses/gpl-2.0.html
   Text Domain: photo-perfect
-  Tags: light, white, one-column, two-columns, left-sidebar, right-sidebar, fixed-layout, custom-background, custom-colors, custom-menu, featured-images, full-width-template, sticky-post, translation-ready, responsive-layout, theme-options, threaded-comments
+  Tags: one-column, two-columns, left-sidebar, right-sidebar, custom-background, custom-colors, custom-header, custom-menu, featured-images, full-width-template, sticky-post, translation-ready, theme-options, threaded-comments, footer-widgets, photography, editor-style, custom-logo
 
   This theme, like WordPress, is licensed under the GPL.
   Use it to make something cool, have fun, and share what you've learned with others.
 
-  Photo Perfect is based on Underscores http://underscores.me/, (C) 2012-2015 Automattic, Inc.
+  This theme is based on Underscores http://underscores.me/, (C) 2012-2015 Automattic, Inc.
   Underscores is distributed under the terms of the GNU GPL v2 or later.
 
   Normalizing styles have been helped along thanks to the fine work of
@@ -447,7 +447,6 @@ p {
   /*--------------------------------------------------------------
   # Forms
   --------------------------------------------------------------*/
-
   button,
   input[type="button"],
   input[type="reset"],
@@ -469,6 +468,10 @@ p {
     transition: all 0.5s ease;
   }
 
+  .widget_media_video button {
+  	box-shadow: none;
+  }
+
   button:hover,
   input[type="button"]:hover,
   input[type="reset"]:hover,
@@ -488,47 +491,85 @@ p {
     box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.5), inset 0 2px 5px rgba(0, 0, 0, 0.15);
   }
 
-  input[type="text"],
-  input[type="email"],
-  input[type="url"],
-  input[type="password"],
-  input[type="search"],
-  textarea,
-  select {
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+input[type="tel"],
+input[type="range"],
+input[type="date"],
+input[type="month"],
+input[type="week"],
+input[type="time"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="color"],
+textarea,
+select{
     color: #666;
     border: 1px solid #ccc;
     padding: 5px;
     width: 100%;
   }
 
-  input[type="text"]:focus,
-  input[type="email"]:focus,
-  input[type="url"]:focus,
-  input[type="password"]:focus,
-  input[type="search"]:focus,
-  textarea:focus {
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="range"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="week"]:focus,
+input[type="time"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="color"]:focus,
+textarea:focus {
     color: #111;
   }
 
-  .search-form {
-    overflow: hidden;
-    position: relative;
-  }
-  input.search-field[type="search"] {
-    margin-bottom: 5px;
-    padding: 5px 5%;
-    width: 90%;
+.search-form,
+.woocommerce-product-search {
+overflow: hidden;
+position: relative;
+}
 
-  }
-  .search-form input[type="submit"] {
+.search-form input.search-field,
+.woocommerce-product-search .search-field {
+    margin-bottom: 5px;
+    padding: 5px 65px 5px 15px;
+    width: 100%;
+    box-sizing: inherit;
+}
+
+.search-form input.search-field,
+.woocommerce-product-search .search-field {
+    color: #222222;
+}
+
+.search-form,
+.woocommerce-product-search {
+    position: relative;
+}
+
+.search-form .search-submit,
+.woocommerce-product-search button {
     font-size: 12px;
     padding: 7px 15px;
     position: absolute;
     right: -2px;
     top: 0;
     height: 31px;
-  }
-
+}
+.woocommerce-product-search button {
+	font-family: inherit;
+}
 
   /*--------------------------------------------------------------
   # Navigation
@@ -831,6 +872,10 @@ p {
     max-width: 100%;
   }
 
+  .wp-audio-shortcode button {
+  	box-shadow: inherit;
+  }
+
   /*--------------------------------------------------------------
   # Content
   --------------------------------------------------------------*/
@@ -919,9 +964,11 @@ p {
     content: "\f086";
   }
   .entry-meta .posted-on::before,
-  .single-post-meta .posted-on::before,
-  .entry-footer > .cat-links:before {
+  .single-post-meta .posted-on::before {
     content: "\f133";
+  }
+  .entry-footer > .cat-links:before {
+    content: "\f07c";
   }
   .entry-meta .byline::before,
   .single-post-meta .byline::before {
@@ -1058,7 +1105,7 @@ p {
     color:#fff;
     background-color: #6b6b6b;
   }
-  }
+
   .form-allowed-tags code {
     white-space: inherit;
     word-wrap: break-word;
@@ -1072,7 +1119,22 @@ p {
     font-weight: normal;
     margin: 0;
   }
+	#commentform label {
+	    display: inline;
+	}
 
+	#commentform input[type="checkbox"],
+	#commentform input[type="radio"] {
+		margin-right: 10px;
+	}
+
+	#commentform  p.form-submit {
+	    margin-top: 30px;
+	}
+
+	#commentform  span.required {
+	    color: #f0632b;
+	}
   /*--------------------------------------------------------------
   # Infinite scroll
   --------------------------------------------------------------*/
@@ -1143,6 +1205,8 @@ p {
 
   .gallery {
     margin-bottom: 15px;
+    margin-left: -5px;
+    margin-right: -5px;
   }
 
   .gallery-item {
@@ -2608,6 +2672,12 @@ p {
     #main-nav, #category-menu {
         z-index: 999;
     }
+    .comment-form-author, .comment-form-email, .comment-form-url {
+	    width: 100%;
+	    float: left;
+	}
+
+
   }
 
   /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
@@ -2705,3 +2775,134 @@ p {
       width: 300px!important; /*The container should be fixed below the widght 320px because below that the design may break*/
     }
   }
+
+
+
+/*================================================================
+========================= Block Styles  =============================
+================================================================= */
+[class^="wp-block-"]:not(.wp-block-gallery) figcaption {
+	font-style: italic;
+	margin-bottom: 1.5em;
+	text-align: left;
+}
+
+hr.wp-block-separator {
+	background: none;
+	border-bottom-width: 1px;
+}
+
+.wp-block-gallery {
+	margin: 0;
+	margin-bottom: 15px;
+}
+
+.wp-block-gallery.alignleft,
+.wp-block-gallery.alignnone,
+.wp-block-gallery.aligncenter,
+.wp-block-gallery.alignright {
+	display: flex;
+}
+
+.wp-block-gallery figcaption {
+	font-style: italic;
+}
+
+p.has-drop-cap:not(:focus)::first-letter {
+	font-size: 5em;
+	margin-top: 0.075em;
+}
+
+.wp-block-image {
+	margin-bottom: 1.5em;
+}
+
+.wp-block-image figure {
+	margin-bottom: 0;
+	margin-top: 0;
+}
+
+.wp-block-image figure.alignleft {
+	margin-right: 1.5em;
+}
+
+.wp-block-image figure.alignright {
+	margin-left: 1.5em;
+}
+
+.wp-block-audio audio {
+	display: block;
+	width: 100%;
+}
+
+.wp-block-cover-image.alignright,
+.wp-block-cover.alignright,
+.wp-block-cover-image.alignleft,
+.wp-block-cover.alignleft,
+.wp-block-cover-image.aligncenter,
+.wp-block-cover.aligncenter {
+	display: flex;
+}
+
+blockquote:before {
+	display: none;
+}
+blockquote {
+    margin: 0 0 15px 0;
+    position: relative;
+    padding: 20px;
+}
+.wp-block-pullquote blockquote {
+    margin: 0;
+    padding: 30px;
+}
+.wp-block-quote {
+    padding: 20px;
+}
+.wp-block-quote:not(.is-large):not(.is-style-large),
+blockquote {
+	border-left: 4px solid #191970;
+}
+.wp-block-pullquote.is-style-solid-color blockquote {
+	border: none;
+	background: #191970;
+	padding: 30px;
+	color: #fff;
+}
+.wp-block-pullquote.is-style-solid-color blockquote p {
+    color: #fff;
+    margin-bottom: 15px;
+}
+.wp-block-pullquote.is-style-solid-color blockquote cite {
+    text-transform: none;
+    font-style: normal;
+    font-size: 18px;
+    color: #ccc;
+}
+.wp-block-quote.is-large,
+.wp-block-quote.is-style-large {
+    margin: 0 0 16px;
+    padding: 30px;
+}
+
+
+.entry-content ul.wp-block-gallery {
+    margin-left: 0;
+    padding-left: 0;
+}
+.entry-content ul,.entry-content ol {
+    padding-left: 20px;
+    margin-left: 0;
+}
+.entry-content h1,
+.entry-content h2,
+.entry-content h3,
+.entry-content h4,
+.entry-content h5,
+.entry-content h6 {
+	clear: both;
+}
+
+/*================================================================
+========================= Style Ends =============================
+================================================================= */

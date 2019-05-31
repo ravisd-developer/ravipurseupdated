@@ -98,7 +98,6 @@ if ( ! function_exists( 'photo_perfect_header_start' ) ) :
    *
    */
   function photo_perfect_header_start() {
-    $extra_class = '';
     ?><header id="masthead" class="site-header" role="banner"><?php
   }
 endif;
